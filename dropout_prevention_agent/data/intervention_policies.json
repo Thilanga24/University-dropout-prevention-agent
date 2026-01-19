@@ -1,0 +1,17 @@
+{
+  "principles": {
+    "non_punitive": true,
+    "no_labeling": true,
+    "no_medical_claims": true,
+    "human_in_the_loop": true
+  },
+  "allowed_actions": [
+    {"type": "Academic advising session", "owner": "advisor"},
+    {"type": "Tutoring referral", "owner": "advisor"},
+    {"type": "Study plan coaching", "owner": "advisor"},
+    {"type": "Financial aid referral", "owner": "admin"},
+    {"type": "Fee payment plan guidance", "owner": "admin"},
+    {"type": "Wellbeing resources (non-diagnostic)", "owner": "advisor"},
+    {"type": "Time management resources", "owner": "student"}
+  ]
+}

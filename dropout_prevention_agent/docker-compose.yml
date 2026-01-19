@@ -1,0 +1,15 @@
+services:
+  dropout-prevention:
+    build: .
+    ports:
+      - "8501:8501"
+    environment:
+      # Optional: set your Gemini key here or use an .env file
+      # GEMINI_API_KEY: "..."
+      GEMINI_MODEL: "gemini-1.5-flash"
+    volumes:
+      # Persist SQLite + outputs/logs on your PC
+      - ./university_agent.db:/app/university_agent.db
+      - ./outputs:/app/outputs
+      - ./logs:/app/logs
+    restart: unless-stopped
