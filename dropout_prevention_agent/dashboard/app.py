@@ -1,10 +1,21 @@
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
 from datetime import datetime
 from datetime import timedelta
 
 import pandas as pd
 import streamlit as st
+
+
+# Streamlit Cloud runs this file with a different working directory.
+# Ensure the project root (parent of `dashboard/`) is on sys.path so
+# imports like `from config.settings import settings` work reliably.
+_PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
 
 from config.settings import settings
 from database.db_manager import DBManager
