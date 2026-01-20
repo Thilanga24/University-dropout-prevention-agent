@@ -1,0 +1,8 @@
+[theme]
+# High-visibility, clean palette for advisor workflows
+base = "light"
+primaryColor = "#2563EB"                # blue (buttons, links)
+backgroundColor = "#F8FAFC"             # very light slate
+secondaryBackgroundColor = "#FFFFFF"    # cards/sidebars
+textColor = "#0F172A"                   # slate-900
+font = "sans serif"

@@ -19,7 +19,9 @@ outputs/*.json
 Thumbs.db
 
 # Streamlit
-.streamlit/
+# Keep config.toml tracked for Streamlit Cloud.
+# (If you later add secrets.toml, do NOT commit it.)
+# .streamlit/secrets.toml
 
 # SQLite
 *.db
