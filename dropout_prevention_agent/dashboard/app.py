@@ -233,7 +233,68 @@ with page[0]:
         return out
 
     if not latest:
-        st.info("No risk snapshots yet. Run the pipeline first (`main.py`).")
+        st.warning("No risk snapshots yet.")
+        st.caption(
+            "On Streamlit Cloud the database starts empty. Use the sidebar ‘Refresh pipeline now’ "
+            "to generate snapshots from `data/students.csv`, or use the Data Entry tab."
+        )
+
+        # Show a safe preview so the app isn't "empty" on first deploy.
+        try:
+            seed = pd.read_csv(settings.students_csv_path)
+            preview_rows: list[dict[str, object]] = []
+            for _, row in seed.iterrows():
+                inp = RiskInput(
+                    student_id=str(row["student_id"]),
+                    current_gpa=float(row["current_gpa"]),
+                    previous_gpa=None if pd.isna(row.get("previous_gpa")) else float(row.get("previous_gpa")),
+                    attendance_pct=float(row["attendance_pct"]),
+                    lms_last_active_days=int(row["lms_last_active_days"]),
+                    failed_modules_count=int(0 if pd.isna(row.get("failed_modules_count")) else row.get("failed_modules_count")),
+                    missed_assessments_count=int(0 if pd.isna(row.get("missed_assessments_count")) else row.get("missed_assessments_count")),
+                    course_load_credits=int(0 if pd.isna(row.get("course_load_credits")) else row.get("course_load_credits")),
+                )
+                risk = calculate_risk(inp)
+                preview_rows.append(
+                    {
+                        "student_id": inp.student_id,
+                        "full_name": str(row.get("full_name", "")),
+                        "score": risk.score,
+                        "level": risk.level,
+                        "reasons": risk.reasons,
+                    }
+                )
+
+            st.subheader("Preview (from data/students.csv)")
+            df_preview = pd.DataFrame(preview_rows)
+            df_preview["risk"] = df_preview["level"].apply(risk_badge)
+            st.dataframe(
+                df_preview[["student_id", "full_name", "score", "level", "risk"]],
+                width="stretch",
+                hide_index=True,
+                column_config={
+                    "score": st.column_config.ProgressColumn("Risk score", min_value=0, max_value=100, format="%d"),
+                },
+            )
+
+            if st.button("Generate snapshots now (writes DB)", use_container_width=True):
+                with st.spinner("Running agent pipeline..."):
+                    gemini = GeminiClient(api_key=settings.gemini_api_key, model=settings.gemini_model)
+                    decision_agent = DecisionAgent(gemini)
+                    out_path = settings.outputs_dir / "recommendations.json"
+                    run_agent(
+                        students_csv=settings.students_csv_path,
+                        decision_agent=decision_agent,
+                        memory=memory,
+                        outputs_path=out_path,
+                        use_db_signals=False,
+                    )
+                st.success("Snapshots generated. Reloading...")
+                st.rerun()
+        except Exception as e:
+            st.info("Could not load demo data from `data/students.csv`. Add it to the repo or use Data Entry.")
+            st.caption(f"Details: {e}")
+
         st.stop()
 
     df_all = pd.DataFrame(latest)
