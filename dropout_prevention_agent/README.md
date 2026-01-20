@@ -6,7 +6,7 @@ An autonomous, **non-punitive** advisory agent that monitors student signals (gr
 - Attendance < 60% → +30
 - GPA drop > 0.5 (vs previous term) → +25
 - LMS inactivity > 14 days → +20
-- Fee delay > 30 days → +25
+
 
 Risk levels:
 - 0–30 LOW
