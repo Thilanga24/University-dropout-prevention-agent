@@ -11,8 +11,8 @@ ENV/
 .env
 
 # Logs / outputs
-logs/*.log
-outputs/*.json
+logs/
+outputs/
 
 # OS
 .DS_Store
@@ -25,3 +25,5 @@ Thumbs.db
 
 # SQLite
 *.db
+*.sqlite
+*.sqlite3
