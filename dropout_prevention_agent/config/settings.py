@@ -4,11 +4,15 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+except Exception:  # pragma: no cover
+    load_dotenv = None
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-load_dotenv(PROJECT_ROOT / ".env")
+if load_dotenv is not None:
+    load_dotenv(PROJECT_ROOT / ".env")
 
 
 @dataclass(frozen=True)
